@@ -4,8 +4,8 @@ C++ wrapper for mysql
 # Usage
 
 ```c++
-mysql db;
 //Connect to mysql
+mysql db;
 db.connect("tcp://127.0.0.1:3306", "root", "123456", "test");
 
 //Fetch with accosiated array
@@ -30,6 +30,16 @@ print_r( fetch );
 
 //get error
 echo( db.get_error() );
+
+
+//Fetch one record with assign value
+var fetch1 = db.sql("SELECT id, title FROM test WHERE id = ? ").find_one( { 1 } );
+print_r( fetch1 );
+
+
+//Fetch with assign value
+var loop2 = db.sql("SELECT id, title FROM test WHERE id = ? ").find( { 1 } );
+print_r( loop2 );
 ```
 
 # Build
