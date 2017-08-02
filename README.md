@@ -46,3 +46,8 @@ print_r( loop2 );
 ```
 g++ -std=c++11 main.cpp -o test -lmysqlcppconn
 ```
+
+# Use it in 4php
+You can use this mysql wrapper in 4php
+
+https://github.com/pejman-hkh/4php
