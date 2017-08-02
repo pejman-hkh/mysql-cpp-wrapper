@@ -21,7 +21,7 @@ int id = db.table("test").insert( insert );
 db.sql("UPDATE test SET title = ? WHERE id = ? ").exec( { "ppp", 1 } );
 
 //Pagination
-var loop1 = db.sql("SELECT id, title FROM test ").pagination(1,5).find();
+var loop1 = db.sql("SELECT id, title FROM test ").pagination(5,1).find();
 print_r( db.loop_pagination );
 
 //Fetch one record
