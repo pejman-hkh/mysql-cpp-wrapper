@@ -180,7 +180,7 @@ public:
       return "mysql";
    }
 
-   mysql() : _driver(0), _pstmt(0), _res(0), _res_meta(0), _stmt(0) {
+   mysql() : _driver(0), _con(0), _pstmt(0), _res(0), _res_meta(0), _stmt(0) {
 
       _table_name = "";
    }
