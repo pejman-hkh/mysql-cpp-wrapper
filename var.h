@@ -12,11 +12,7 @@
 #include "dtoa_milo.h"
 #include "itoa_milo.h"
 
-
-void exit() {
-    exit(0);
-}
-
+namespace vars {
 
 double microtime() {
     struct timeval time;
@@ -27,8 +23,8 @@ double microtime() {
 }
 
 
-enum PHP_TYPE {
-    PHP_STRING, PHP_INT, PHP_ARRAY, PHP_FUNCTION, PHP_CLASS, PHP_BOOL, PHP_DOUBLE
+enum VAR_TYPE {
+    VAR_STRING, VAR_INT, VAR_ARRAY, VAR_FUNCTION, VAR_CLASS, VAR_BOOL, VAR_DOUBLE
 };
 
 
@@ -96,9 +92,9 @@ public:
 	}
 
     std::string string() const {
-    	if( _type == PHP_DOUBLE ){
+    	if( _type == VAR_DOUBLE ){
     		return double_to_string(_int);
-    	} else if( _type == PHP_INT ) {
+    	} else if( _type == VAR_INT ) {
 
     		return int_to_string( _int );    		
     	}
@@ -106,52 +102,52 @@ public:
     		return _string;  
     }
 
-    var(): _type(PHP_STRING), _string("") {}
+    var(): _type(VAR_STRING), _string("") {}
 
-	var( const std::function <var(var&)> &a ) : _type( PHP_CLASS ), _string("Function"), methods( a ) {}
+	var( const std::function <var(var&)> &a ) : _type( VAR_CLASS ), _string("Function"), methods( a ) {}
 
-	var( const std::function <var(var)> &a ) :_type( PHP_CLASS ), _string("Function"), methods1(a) {}
+	var( const std::function <var(var)> &a ) :_type( VAR_CLASS ), _string("Function"), methods1(a) {}
 
-	var( const func &a ) : _type(PHP_FUNCTION), function(a), _string("Function") {}
+	var( const func &a ) : _type(VAR_FUNCTION), function(a), _string("Function") {}
 
-	var( const func1 &a ) : _type(PHP_FUNCTION), function1(a), _string("Function") {}
+	var( const func1 &a ) : _type(VAR_FUNCTION), function1(a), _string("Function") {}
 
-	var( const int &a ): _type(PHP_INT), _int( a ) {}
+	var( const int &a ): _type(VAR_INT), _int( a ) {}
 
-	var( const long int &a ): _type(PHP_INT), _int( a ) {}
+	var( const long int &a ): _type(VAR_INT), _int( a ) {}
 
-	var( const unsigned int &a ): _type(PHP_INT), _int( a ) {}
+	var( const unsigned int &a ): _type(VAR_INT), _int( a ) {}
 
-	var( const long unsigned int &a ): _type(PHP_INT), _int( a ) {}
+	var( const long unsigned int &a ): _type(VAR_INT), _int( a ) {}
 
-	var( const float &a ): _type(PHP_DOUBLE), _int( a ) {}
+	var( const float &a ): _type(VAR_DOUBLE), _int( a ) {}
 
-	var( const double &a ): _type(PHP_DOUBLE), _int( a ) {}
+	var( const double &a ): _type(VAR_DOUBLE), _int( a ) {}
 
-	var( const long double &a ): _type(PHP_DOUBLE), _int( a ) {}
+	var( const long double &a ): _type(VAR_DOUBLE), _int( a ) {}
 	
 
-	var( const std::string &a ): _type(PHP_STRING), _string( a ) {}
+	var( const std::string &a ): _type(VAR_STRING), _string( a ) {}
 
-	var( const char * const &a ) : _type(PHP_STRING), _string( to_string(a) ) {}
+	var( const char * const &a ) : _type(VAR_STRING), _string( to_string(a) ) {}
 
-	var( const unsigned char* const &a ) : _type(PHP_STRING), _string( to_string(a) ) {}
+	var( const unsigned char* const &a ) : _type(VAR_STRING), _string( to_string(a) ) {}
 
-	var( char *a ) : _type(PHP_STRING), _string( a )  {}
+	var( char *a ) : _type(VAR_STRING), _string( a )  {}
 
-    var( const bool &a ) : _type(PHP_INT), _int( a ? 1 : 0 ) {}
+    var( const bool &a ) : _type(VAR_INT), _int( a ? 1 : 0 ) {}
 
 	explicit operator bool() 
 	{
 
 		switch( _type ) {
-			case PHP_STRING : {
+			case VAR_STRING : {
 				if( ( _string != "0" && _string != "" ) )
 					return true;
 			} break;
 
 
-			case PHP_ARRAY : {
+			case VAR_ARRAY : {
 				if( this->count() > 0 )
 					return true;
 			}
@@ -258,7 +254,7 @@ public:
 		for( int i = 0; i < keys.size(); i++ ) {
 
      		if( index._type == keys[i]._type ) {
-        		if( index._type == PHP_STRING ) {
+        		if( index._type == VAR_STRING ) {
         			if( index._string == keys[i]._string )
         				return true;
         		} else {
@@ -301,7 +297,7 @@ public:
     }
 
     int count() {
-        if( _type == PHP_ARRAY ) {
+        if( _type == VAR_ARRAY ) {
             return keys.size();
         } else {
             return 0;
@@ -317,7 +313,7 @@ public:
 	}
 
 	int to_int() {
-		if( _type == PHP_STRING )
+		if( _type == VAR_STRING )
 			return to_number<int>( _string );
 		else
 			return (int)_int;
@@ -333,13 +329,13 @@ public:
 		for( int i = 0; i < keys.size(); ++i ) {
 			var value = data[i];
 
-			if( value[0]._type == PHP_ARRAY ) {
+			if( value[0]._type == VAR_ARRAY ) {
 				for( auto x : value ) {
 					out[ i ][ value[x][0] ] = value[x][1];
 				}
 			} else {
 				var val = data[i];
-				if( val._type == PHP_ARRAY ) {
+				if( val._type == VAR_ARRAY ) {
 					out[ val[0] ] = val[1];
 				} else {
 					out[i] = val;
@@ -351,7 +347,7 @@ public:
 	}
 
 	var( std::initializer_list<var> a ) {
-		_type = PHP_ARRAY;
+		_type = VAR_ARRAY;
 
 		int i = 0;
 		for (auto n : a ) {
@@ -372,7 +368,7 @@ public:
 
 	var operator+( var a ) {
    		var out;
-   		if( _type == PHP_STRING || a._type == PHP_STRING ) {
+   		if( _type == VAR_STRING || a._type == VAR_STRING ) {
         	out = string() + a.string();
         } else {
        		out = _int + a._int;
@@ -389,7 +385,7 @@ public:
 	var operator+=( var a ) {
         var out;
 
-        if( _type == PHP_STRING || a._type == PHP_STRING ) {
+        if( _type == VAR_STRING || a._type == VAR_STRING ) {
 
         	_string = string() + a.string();
 
@@ -484,7 +480,7 @@ public:
 	}
 		     
 	bool operator==( const int &a ) {
-		if( _type != PHP_STRING ){
+		if( _type != VAR_STRING ){
 			return a == _int;
 		}
 		
@@ -493,7 +489,7 @@ public:
 
 	bool operator==( var a ) {
 		if( _type == a._type ){
-			if( _type == PHP_STRING ){
+			if( _type == VAR_STRING ){
 				return _string == a._string;
 			} else {
 				return _int == a._int ;
@@ -512,7 +508,7 @@ public:
         for(i = 0;i < keys.size(); ++i)
         {
         	if( _type == keys[i]._type ) {
-        		if( _type == PHP_STRING ) {
+        		if( _type == VAR_STRING ) {
         			if( _string == keys[i]._string )
         				return data[i];
         		} else {
@@ -531,7 +527,7 @@ public:
 
 	var &operator[]( const std::string &a ) {
 
-		_type = PHP_ARRAY;
+		_type = VAR_ARRAY;
 
         int i = 0;
         for(i = 0;i < keys.size(); ++i)
@@ -549,7 +545,7 @@ public:
 
 	var &operator[]( const char * const &a ) {
 
-		_type = PHP_ARRAY;
+		_type = VAR_ARRAY;
 
         int i = 0;
         for(i = 0;i < keys.size(); ++i)
@@ -567,7 +563,7 @@ public:
 
 	var &operator[]( const int &a ) {
 
-		_type = PHP_ARRAY;
+		_type = VAR_ARRAY;
 
 	
         int i = 0;
@@ -575,7 +571,7 @@ public:
         {
 
         	switch( keys[i]._type ) {
-	            case PHP_STRING :
+	            case VAR_STRING :
 	            	if(  int_to_string( a ) == keys[i].string() )
                 	return data[i];
                 break;
@@ -598,7 +594,7 @@ public:
 
 	var &operator[]( const unsigned int &a ) {
 
-		_type = PHP_ARRAY;
+		_type = VAR_ARRAY;
 
 	
         int i = 0;
@@ -606,7 +602,7 @@ public:
         {
 
         	switch( keys[i]._type ) {
-	            case PHP_STRING :
+	            case VAR_STRING :
 	            	if(  int_to_string( a ) == keys[i].string() )
                 	return data[i];
                 break;
@@ -628,13 +624,13 @@ public:
 
 	var &operator[]( const double &a ) {
 
-		_type = PHP_ARRAY;
+		_type = VAR_ARRAY;
 
         int i = 0;
         for(i = 0;i < keys.size(); ++i)
         {
         	switch( keys[i]._type ) {
-	            case PHP_STRING :
+	            case VAR_STRING :
 	            	if(  double_to_string( a ) == keys[i].string() )
                 	return data[i];
                 break;
@@ -653,13 +649,13 @@ public:
 
 	var &operator[]( var a ) {
 
-		_type = PHP_ARRAY;
+		_type = VAR_ARRAY;
 
         int i = 0;
         for(i = 0;i < keys.size(); ++i)
         {
         	if( _type == keys[i]._type ) {
-        		if( _type == PHP_STRING ) {
+        		if( _type == VAR_STRING ) {
         			if( _string == keys[i]._string )
         				return data[i];
         		} else {
@@ -696,7 +692,7 @@ private:
 
 
 void echo( var i ) {
-    if( i.type() == PHP_ARRAY ) {
+    if( i.type() == VAR_ARRAY ) {
     	printf("Array\n"); 
     } else {
     	std::string out = i.string();
@@ -714,7 +710,7 @@ bool empty( var a ) {
 }
 
 void print_r( var a, std::string &ret_str, const std::string &tab = "" ) {
-    if( a.type() == PHP_ARRAY ) {
+    if( a.type() == VAR_ARRAY ) {
         int i = 0;
      
         ret_str += "Array (\n";
@@ -723,7 +719,7 @@ void print_r( var a, std::string &ret_str, const std::string &tab = "" ) {
 			
 			ret_str += tab + "    [" + x.string() + "] => ";
 		
-            if( a[x].type() == PHP_ARRAY ) {
+            if( a[x].type() == VAR_ARRAY ) {
                 print_r( a[x], ret_str, tab + "    " );
             } else {
                 ret_str += a[x].string() +"\n";
@@ -731,7 +727,7 @@ void print_r( var a, std::string &ret_str, const std::string &tab = "" ) {
         }
 
         ret_str += tab + ")\n";
-    } else if ( a.type() == PHP_FUNCTION ) {
+    } else if ( a.type() == VAR_FUNCTION ) {
     	ret_str += "function";
     } else {
         ret_str += a.string();
@@ -747,4 +743,6 @@ var print_r( const var &a, bool ret = false ) {
 		fwrite(out.c_str(), 1, out.length(), stdout);
 
 	return 0;
+}
+
 }

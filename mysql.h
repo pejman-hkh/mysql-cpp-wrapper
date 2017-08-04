@@ -8,6 +8,8 @@
 #include <cppconn/statement.h>
 #include <cppconn/prepared_statement.h>
 
+using namespace vars;
+
 class mysql  {
 
 private:
