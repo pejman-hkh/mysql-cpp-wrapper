@@ -42,12 +42,16 @@ var loop2 = db.sql("SELECT id, title FROM test WHERE id = ? ").find( { 1 } );
 print_r( loop2 );
 ```
 
+# C++ vars
+See
+
+https://github.com/pejman-hkh/cpp-vars
+
+for var usage
+
+
 # Build
 ```
 g++ -std=c++11 main.cpp -o test -lmysqlcppconn
 ```
 
-# Use it in 4php
-You can use this mysql wrapper in 4php
-
-https://github.com/pejman-hkh/4php
