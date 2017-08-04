@@ -43,11 +43,7 @@ print_r( loop2 );
 ```
 
 # C++ vars
-See
-
-https://github.com/pejman-hkh/cpp-vars
-
-for var usage
+See https://github.com/pejman-hkh/cpp-vars for var usage
 
 # Sqlite wrapper
 see my sqlite wrapper too :
