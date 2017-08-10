@@ -107,16 +107,16 @@ private:
    
       if( prepare() ) {
 
-         for( auto x : data  ) {
-            var val = data[x];
+         for( auto &x : data  ) {
+            var &val = data[x];
 
-            if( val.type() == "int" ) {
+            if( val.type() == VAR_INT ) {
 
                if( ! bind( val.to_int() ) ) {
                   return false;
                }
 
-            } else if( val.type() == "double" ) {
+            } else if( val.type() == VAR_DOUBLE ) {
 
                if( ! bind( val.to_num() ) ) {
                   return false;
